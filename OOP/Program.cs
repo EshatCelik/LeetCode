@@ -6,7 +6,7 @@ namespace OOP
 {
     internal class Program
     {
-        public class Video 
+        public class Video
         {
             public string Title { get; set; }
         }
@@ -24,33 +24,43 @@ namespace OOP
             }
             protected virtual void OnVideoEncoding()
             {
-                if (VideoEncoded!=null)
+                if (VideoEncoded != null)
                 {
-                    VideoEncoded(this,EventArgs.Empty);
+                    VideoEncoded(this, EventArgs.Empty);
                 }
             }
         }
 
         public class MessageService
         {
-            public void OnVideoEncoded(object sourc,EventArgs args)
+            public void OnVideoEncoded(object sourc, EventArgs args)
             {
                 Console.WriteLine("Message Service : sendign a text message ...");
             }
         }
-       
+
         static void Main(string[] args)
         {
-            var video = new Video() { Title = "Title 1" };
+            //var video = new Video() { Title = "Title 1" };
 
-            var videoEncoder=new VideoEncoder();
-            var messgeService=new MessageService();
+            //var videoEncoder=new VideoEncoder();
+            //var messgeService=new MessageService();
 
-            videoEncoder.VideoEncoded += messgeService.OnVideoEncoded;
+            //videoEncoder.VideoEncoded += messgeService.OnVideoEncoded;
 
-            videoEncoder.Encode(video);
-            
+            //videoEncoder.Encode(video);
+            var action = new Action<int>(yazdir);
+            action(3);
+            var hesap = new Func<int, int>(hesapla);
+            Console.WriteLine(hesap(2));
+
         }
+        public static void yazdir(int i)
+        {
+            Console.WriteLine( "action yazdırıldı"+i.ToString());
+        }
+        public static int hesapla(int i) { return i * i; }
+
 
 
     }
