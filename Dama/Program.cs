@@ -15,18 +15,22 @@ namespace Dama
             List<Kart> GameCartList = new List<Kart>();
             List<Kart> GameHumanList = new List<Kart>();
             List<Kart> GameComputerList = new List<Kart>();
-            int sayac = 0, HumanPuan = 0, ComputerPuan = 0;
+            int sayac = 0, HumanPuan = 0, ComputerPuan = 0,idCounter=0;
             var rnd = new Random();
             List<Kart> CreateCartList(string name)
             {
-                setlist.Add(new Kart() { SetNo = "A", SetType = name });
+                setlist.Add(new Kart() {Id=idCounter, SetNo = "A", SetType = name });
+                idCounter++;
                 for (int i = 2; i < 11; i++)
                 {
-                    setlist.Add(new Kart() { SetNo = i.ToString(), SetType = name });
+                    setlist.Add(new Kart() {Id=idCounter, SetNo = i.ToString(), SetType = name });
+                    idCounter++;
                 }
-                setlist.Add(new Kart() { SetNo = "J", SetType = name });
-                setlist.Add(new Kart() { SetNo = "S", SetType = name });
-                setlist.Add(new Kart() { SetNo = "K", SetType = name });
+                setlist.Add(new Kart() {Id=idCounter, SetNo = "J", SetType = name });
+                idCounter++;
+                setlist.Add(new Kart() { Id = idCounter, SetNo = "S", SetType = name });
+                idCounter++;
+                setlist.Add(new Kart() { Id = idCounter, SetNo = "K", SetType = name });
                 return setlist;
             }
 
@@ -113,19 +117,20 @@ namespace Dama
             void CreateDeste()
             {
                 int desteSayac = 0;
+                int desteSon = setlist.Count - 4 == 0|| setlist.Count - 4 ==- 4 ? 2 : 4;
                 //Human list
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < desteSon; i++)
                 {
                     humanList.Add(setlist[desteSayac]);
                     RemoveItemtoDeste(desteSayac);
 
                 }
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < desteSon; i++)
                 {
                     CompList.Add(setlist[desteSayac]);
                     RemoveItemtoDeste(desteSayac);
                 }
-                //WriteDeste();
+
             }
 
             void RemoveItemtoDeste(int index)
@@ -160,6 +165,7 @@ namespace Dama
                 Console.WriteLine();
                 Console.WriteLine();
             }
+
             void WriteGameCartList()
             {
                 Console.WriteLine();
@@ -171,7 +177,34 @@ namespace Dama
                 }
                 Console.WriteLine();
             }
+            bool IsKartJ(string kart)
+            {
+                return kart == "J";
+            }
 
+            void WinnerHuman(string kart)
+            {
+                Console.WriteLine("İnsan Kazandı :" +kart);
+                HumanPuan += 10;
+                foreach (var item in GameCartList)
+                {
+                    GameHumanList.Add(item);
+                }
+                GameCartList = new List<Kart>();
+            }
+            void WinnerComputer(string kart)
+            {
+                ComputerPuan += 10;
+                Console.WriteLine("Bilgisayar Kazandı: " +kart);
+                foreach (var item in GameCartList)
+                {
+
+                    GameComputerList.Add(item);
+
+                }
+                GameCartList = new List<Kart>();
+
+            }
             StartGame();
 
             void StartGame()
@@ -208,24 +241,25 @@ namespace Dama
                                     WriteGameCartList();
                                 }
                             }
+
                             Console.WriteLine("Bir kart At");
                             var ss = Console.ReadLine().ToUpper();
                             var kart = getHumanKart(ss);
 
-                            if (GameCartList.Count != 0)
+                            if (GameCartList.Count > 0)
+                            {
+                                if (IsKartJ(kart.SetNo))
+                                    WinnerHuman(kart.KartName);
+                            }
+
+                            else if (GameCartList.Count != 0)
                             {
 
                                 var sonKart = GameCartList[GameCartList.Count - 1];
 
                                 if (kart.SetNo == sonKart.SetNo)
                                 {
-                                    Console.WriteLine(" İnsan Kazandı ");
-                                    HumanPuan += 10;
-                                    foreach (var item in GameCartList)
-                                    {
-                                        GameHumanList.Add(item);
-                                    }
-                                    GameCartList = new List<Kart>();
+                                    WinnerHuman(sonKart.KartName);
                                 }
                                 else
                                 {
@@ -238,31 +272,20 @@ namespace Dama
                                 GameCartList.Add(kart);
 
                             }
-                            //if (humanList.Count>0&& kart.SetNo==GameCartList.LastOrDefault().SetNo)
-                            //{
-                            //    foreach (var item in GameCartList)
-                            //    {
-                            //        humanList.Add(item);
-                            //    }
-                            //}
-                            //Console.WriteLine(kart.KartName);
 
                             var k = GetComputerKart(kart.SetNo);
+
+                            if (GameCartList.Count > 0)
+                            {
+                                if (IsKartJ(k.SetNo))
+                                    WinnerComputer(k.KartName);
+                            }
 
                             if (GameCartList.Count != 0)
                             {
                                 if (k.SetNo == GameCartList[GameCartList.Count - 1].SetNo)
                                 {
-
-                                    ComputerPuan += 10;
-                                    Console.WriteLine("Pişti");
-                                    foreach (var item in GameCartList)
-                                    {
-
-                                        GameComputerList.Add(item);
-
-                                    }
-                                    GameCartList = new List<Kart>();
+                                    WinnerComputer(k.KartName);
                                 }
                                 else
                                 {
